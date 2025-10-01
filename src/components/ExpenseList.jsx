@@ -4,7 +4,7 @@ function ExpenseList({ expenses, houses, onDelete }) {
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("fr-FR", {
       style: "currency",
-      currency: "Fr",
+      currency: "XOF",
     }).format(amount)
   }
 
@@ -38,9 +38,6 @@ function ExpenseList({ expenses, houses, onDelete }) {
                           {expense.description}
                         </h3>
                         <p className="text-sm text-gray-500">{houseInfo}</p>
-                        <p className="text-sm text-gray-500">
-                          Catégorie: {expense.category}
-                        </p>
                       </div>
                       <div className="text-right">
                         <p className="text-sm font-semibold text-gray-900">{formatCurrency(expense.amount)}</p>

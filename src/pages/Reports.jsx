@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import axios from "axios"
 import MonthlyReport from "../components/MonthlyReport"
+import Loader from "../components/Loader"
 import { baseUrl, housesUrl, paymentsUrl, tenantsUrl, expensesUrl } from "../config/url"
 
 function Reports() {
@@ -61,11 +62,7 @@ function Reports() {
   }
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="text-lg text-gray-600">Chargement du rapport...</div>
-      </div>
-    )
+    return <Loader text="Chargement du rapport..." />
   }
 
   return (

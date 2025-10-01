@@ -126,9 +126,8 @@ function MonthlyReport({ month, payments, tenants, houses, expenses, filter }) {
 
       doc.setFontSize(10)
       doc.text("DESCRIPTION", 20, yPos)
-      doc.text("CATÉGORIE", 80, yPos)
-      doc.text("MAISON", 130, yPos)
-      doc.text("MONTANT", 170, yPos)
+      doc.text("MAISON", 90, yPos)
+      doc.text("MONTANT", 150, yPos)
       yPos += 5
       doc.line(20, yPos, 190, yPos)
       yPos += 5
@@ -140,10 +139,9 @@ function MonthlyReport({ month, payments, tenants, houses, expenses, filter }) {
         }
 
         const house = houses.find((h) => h.id === expense.house_id)
-        doc.text(expense.description.substring(0, 15), 20, yPos)
-        doc.text(expense.category.substring(0, 12), 80, yPos)
-        doc.text(house ? house.reference.substring(0, 10) : "N/A", 130, yPos)
-        doc.text(formatCurrency(expense.amount), 170, yPos)
+        doc.text(expense.description.substring(0, 20), 20, yPos)
+        doc.text(house ? house.reference.substring(0, 15) : "N/A", 90, yPos)
+        doc.text(formatCurrency(expense.amount), 150, yPos)
         yPos += 7
       })
     }

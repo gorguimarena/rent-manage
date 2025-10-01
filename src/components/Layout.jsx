@@ -1,19 +1,26 @@
 "use client"
 import { Link, useLocation } from "react-router-dom"
 import { useAuth } from "../contexts/AuthContext"
+import { usePermissions } from "../hooks/usePermissions"
 
 function Layout({ children }) {
   const { user, logout } = useAuth()
+  const { hasPermission } = usePermissions()
   const location = useLocation()
 
-  const navigation = [
-    { name: "Tableau de bord", href: "/dashboard" },
-    { name: "Maisons", href: "/houses" },
-    { name: "Locataires", href: "/tenants" },
-    { name: "Paiements", href: "/payments" },
-    { name: "Dépenses", href: "/expenses" },
-    { name: "Rapports", href: `/reports/${new Date().toISOString().slice(0, 7)}` },
+  const allNavigation = [
+    { name: "Tableau de bord", href: "/dashboard", permission: null },
+    { name: "Maisons", href: "/houses", permission: "canViewHouses" },
+    { name: "Locataires", href: "/tenants", permission: null },
+    { name: "Paiements", href: "/payments", permission: null },
+    { name: "Dépenses", href: "/expenses", permission: null },
+    { name: "Rapports", href: `/reports/${new Date().toISOString().slice(0, 7)}`, permission: null },
   ]
+
+  // Filtrer la navigation selon les permissions
+  const navigation = allNavigation.filter(item =>
+    !item.permission || hasPermission(user, item.permission)
+  )
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -41,7 +48,12 @@ function Layout({ children }) {
               </div>
             </div>
             <div className="flex items-center">
-              <span className="text-gray-700 mr-4">Bonjour, {user?.email}</span>
+              <div className="text-right mr-4">
+                <div className="text-gray-700">Bonjour, {user?.email}</div>
+                <div className="text-xs text-gray-500 capitalize">
+                  {user?.role === 'super_admin' ? 'Super Admin' : user?.role === 'admin' ? 'Admin' : user?.role}
+                </div>
+              </div>
               <button
                 onClick={logout}
                 className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-md text-sm font-medium"

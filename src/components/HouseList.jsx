@@ -1,6 +1,6 @@
 "use client"
 
-function HouseList({ houses, onEdit, onDelete }) {
+function HouseList({ houses, onEdit, onDelete, canManageHouses = true }) {
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("fr-FR", {
       style: "currency",
@@ -55,20 +55,22 @@ function HouseList({ houses, onEdit, onDelete }) {
                       </span>
                     </div>
 
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => onEdit(house)}
-                        className="text-indigo-600 hover:text-indigo-900 text-sm font-medium"
-                      >
-                        Modifier
-                      </button>
-                      <button
-                        onClick={() => onDelete(house.id)}
-                        className="text-red-600 hover:text-red-900 text-sm font-medium"
-                      >
-                        Supprimer
-                      </button>
-                    </div>
+                    {canManageHouses && (
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => onEdit(house)}
+                          className="text-indigo-600 hover:text-indigo-900 text-sm font-medium"
+                        >
+                          Modifier
+                        </button>
+                        <button
+                          onClick={() => onDelete(house.id)}
+                          className="text-red-600 hover:text-red-900 text-sm font-medium"
+                        >
+                          Supprimer
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

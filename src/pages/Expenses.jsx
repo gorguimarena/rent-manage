@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import axios from "axios"
 import ExpenseForm from "../components/ExpenseForm"
 import ExpenseList from "../components/ExpenseList"
+import Loader from "../components/Loader"
 import { baseUrl, housesUrl, expensesUrl } from "../config/url"
 
 function Expenses() {
@@ -58,11 +59,7 @@ function Expenses() {
   }
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="text-lg text-gray-600">Chargement...</div>
-      </div>
-    )
+    return <Loader text="Chargement des dépenses..." />
   }
 
   return (

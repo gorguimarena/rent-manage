@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { Loader2 } from "lucide-react"
 
 function TenantForm({ tenant, houses, onSubmit, onCancel }) {
   const [formData, setFormData] = useState({
@@ -10,6 +11,7 @@ function TenantForm({ tenant, houses, onSubmit, onCancel }) {
   })
 
   const [errors, setErrors] = useState({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
     if (tenant) {
@@ -63,10 +65,15 @@ function TenantForm({ tenant, houses, onSubmit, onCancel }) {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (validateForm()) {
-      onSubmit(formData)
+      setIsSubmitting(true)
+      try {
+        await onSubmit(formData)
+      } finally {
+        setIsSubmitting(false)
+      }
     }
   }
 
@@ -165,9 +172,17 @@ function TenantForm({ tenant, houses, onSubmit, onCancel }) {
           </button>
           <button
             type="submit"
-            className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            disabled={isSubmitting}
+            className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
           >
-            {tenant ? "Modifier" : "Ajouter"}
+            {isSubmitting ? (
+              <>
+                <Loader2 className="animate-spin -ml-1 mr-2 h-4 w-4" />
+                {tenant ? "Modification..." : "Ajout..."}
+              </>
+            ) : (
+              tenant ? "Modifier" : "Ajouter"
+            )}
           </button>
         </div>
       </form>

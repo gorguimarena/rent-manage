@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import axios from "axios"
 import TenantForm from "../components/TenantForm"
 import TenantList from "../components/TenantList"
+import Loader from "../components/Loader"
 import { baseUrl, housesUrl, tenantsUrl } from "../config/url"
 
 function Tenants() {
@@ -127,11 +128,7 @@ function Tenants() {
   }
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="text-lg text-gray-600">Chargement...</div>
-      </div>
-    )
+    return <Loader text="Chargement des locataires..." />
   }
 
   return (

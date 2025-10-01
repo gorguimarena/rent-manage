@@ -4,15 +4,30 @@ import { useState, useEffect } from "react"
 import axios from "axios"
 import HouseForm from "../components/HouseForm"
 import HouseList from "../components/HouseList"
+import Loader from "../components/Loader"
+import { useAuth } from "../contexts/AuthContext"
+import { usePermissions } from "../hooks/usePermissions"
 import { baseUrl, housesUrl } from "../config/url"
 
 function Houses() {
+  const { user } = useAuth()
+  const { hasPermission } = usePermissions()
   const [houses, setHouses] = useState([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [editingHouse, setEditingHouse] = useState(null)
   const [error, setError] = useState("")
   const houseBase = `${baseUrl}${housesUrl}`
+
+  // Vérifier si l'utilisateur peut voir cette page
+  if (!hasPermission(user, 'canViewHouses')) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64">
+        <div className="text-red-600 text-lg font-medium">Accès refusé</div>
+        <p className="text-gray-600 mt-2">Vous n'avez pas les permissions nécessaires pour accéder à cette page.</p>
+      </div>
+    )
+  }
 
   useEffect(() => {
     fetchHouses()
@@ -84,23 +99,21 @@ function Houses() {
   }
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="text-lg text-gray-600">Chargement...</div>
-      </div>
-    )
+    return <Loader text="Chargement des maisons..." />
   }
 
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Gestion des Maisons</h1>
-        <button
-          onClick={handleAddHouse}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-        >
-          Ajouter une maison
-        </button>
+        {hasPermission(user, 'canManageHouses') && (
+          <button
+            onClick={handleAddHouse}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+          >
+            Ajouter une maison
+          </button>
+        )}
       </div>
 
       {error && (
@@ -115,7 +128,12 @@ function Houses() {
         </div>
       )}
 
-      <HouseList houses={houses} onEdit={handleEditHouse} onDelete={handleDeleteHouse} />
+      <HouseList
+        houses={houses}
+        onEdit={handleEditHouse}
+        onDelete={handleDeleteHouse}
+        canManageHouses={hasPermission(user, 'canManageHouses')}
+      />
     </div>
   )
 }
