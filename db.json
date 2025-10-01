@@ -1,0 +1,102 @@
+{
+  "users": [{ "id": 1, "email": "admin@test.com", "password": "123456", "role": "owner" }],
+  "houses": [
+    {
+      "id": 1,
+      "reference": "Villa 1",
+      "address": "Dakar, Senegal",
+      "unit_types": [
+        { "type": "Chambre simple", "count": 2, "occupied": 1, "rent": 150000 },
+        { "type": "Appartement", "count": 1, "occupied": 1, "rent": 300000 }
+      ]
+    },
+    {
+      "id": 2,
+      "reference": "Immeuble Centre",
+      "address": "Plateau, Dakar",
+      "unit_types": [
+        { "type": "Studio", "count": 3, "occupied": 2, "rent": 80000 },
+        { "type": "2 pièces", "count": 2, "occupied": 1, "rent": 120000 }
+      ]
+    }
+  ],
+  "tenants": [
+    {
+      "id": 1,
+      "full_name": "Mamadou Diallo",
+      "phone": "770000000",
+      "house_id": 1,
+      "unit_type": "Appartement",
+      "rent": 300000,
+      "status": "active",
+      "move_out_date": null
+    },
+    {
+      "id": 2,
+      "full_name": "Awa Ndiaye",
+      "phone": "770000001",
+      "house_id": 1,
+      "unit_type": "Chambre simple",
+      "rent": 150000,
+      "status": "active",
+      "move_out_date": null
+    },
+    {
+      "id": 3,
+      "full_name": "Ousmane Fall",
+      "phone": "770000002",
+      "house_id": 2,
+      "unit_type": "Studio",
+      "rent": 80000,
+      "status": "active",
+      "move_out_date": null
+    },
+    {
+      "id": 4,
+      "full_name": "Fatou Sall",
+      "phone": "770000003",
+      "house_id": 2,
+      "unit_type": "Studio",
+      "rent": 80000,
+      "status": "active",
+      "move_out_date": null
+    },
+    {
+      "id": 5,
+      "full_name": "Ibrahima Ba",
+      "phone": "770000004",
+      "house_id": 2,
+      "unit_type": "2 pièces",
+      "rent": 120000,
+      "status": "active",
+      "move_out_date": null
+    }
+  ],
+  "payments": [
+    { "id": 1, "tenant_id": 1, "month": "2025-09", "amount": 300000, "paid": true },
+    { "id": 2, "tenant_id": 2, "month": "2025-09", "amount": 150000, "paid": true },
+    { "id": 3, "tenant_id": 3, "month": "2025-09", "amount": 80000, "paid": false },
+    { "id": 4, "tenant_id": 4, "month": "2025-09", "amount": 80000, "paid": true },
+    { "id": 5, "tenant_id": 5, "month": "2025-09", "amount": 120000, "paid": false }
+  ],
+  "expenses": [
+    {
+      "id": 1,
+      "house_id": 1,
+      "description": "Réparation plomberie",
+      "amount": 50000,
+      "category": "Maintenance",
+      "date": "2025-09-15",
+      "month": "2025-09"
+    },
+    {
+      "id": 2,
+      "house_id": 2,
+      "description": "Électricité commune",
+      "amount": 25000,
+      "category": "Utilities",
+      "date": "2025-09-10",
+      "month": "2025-09"
+    }
+  ]
+}
