@@ -1,25 +1,29 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import axios from "axios"
+import { useState } from "react"
 import HouseForm from "../components/HouseForm"
 import HouseList from "../components/HouseList"
 import Loader from "../components/Loader"
 import { useAuth } from "../contexts/AuthContext"
 import { usePermissions } from "../hooks/usePermissions"
-import { baseUrl, housesUrl } from "../config/url"
+import { useHouses } from "../hooks/useDataQueries"
 
 function Houses() {
   const { user } = useAuth()
   const { hasPermission } = usePermissions()
-  const [houses, setHouses] = useState([])
-  const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [editingHouse, setEditingHouse] = useState(null)
-  const [error, setError] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 6
-  const houseBase = `${baseUrl}${housesUrl}`
+
+  const {
+    houses,
+    loading,
+    error,
+    addHouse,
+    updateHouse,
+    deleteHouse
+  } = useHouses()
 
   // Vérifier si l'utilisateur peut voir cette page
   if (!hasPermission(user, 'canViewHouses')) {
@@ -29,22 +33,6 @@ function Houses() {
         <p className="text-gray-600 mt-2">Vous n'avez pas les permissions nécessaires pour accéder à cette page.</p>
       </div>
     )
-  }
-
-  useEffect(() => {
-    fetchHouses()
-  }, [])
-
-  const fetchHouses = async () => {
-    try {
-      const response = await axios.get(`${baseUrl}${housesUrl}`)
-      setHouses(response.data)
-    } catch (error) {
-      setError("Erreur lors du chargement des maisons")
-      console.error("Error fetching houses:", error)
-    } finally {
-      setLoading(false)
-    }
   }
 
   const handleAddHouse = () => {
@@ -60,11 +48,10 @@ function Houses() {
   const handleDeleteHouse = async (houseId) => {
     if (window.confirm("Êtes-vous sûr de vouloir supprimer cette maison ?")) {
       try {
-        await axios.delete(`${houseBase}/${houseId}`)
-        setHouses(houses.filter((house) => house.id !== houseId))
+        await deleteHouse(houseId)
       } catch (error) {
-        setError("Erreur lors de la suppression de la maison")
         console.error("Error deleting house:", error)
+        // Error is handled by the hook
       }
     }
   }
@@ -72,26 +59,22 @@ function Houses() {
   const handleFormSubmit = async (houseData) => {
     try {
       if (editingHouse) {
-        const response = await axios.put(`${houseBase}/${editingHouse.id}`, {
+        await updateHouse(editingHouse.id, {
           ...houseData,
-          id: editingHouse.id,
           occupied_units: editingHouse.occupied_units,
         })
-        setHouses(houses.map((house) => (house.id === editingHouse.id ? response.data : house)))
       } else {
         // Add new house
-        const response = await axios.post(`${houseBase}`, {
+        await addHouse({
           ...houseData,
           occupied_units: 0,
         })
-        setHouses([...houses, response.data])
       }
       setShowForm(false)
       setEditingHouse(null)
-      setError("")
     } catch (error) {
-      setError("Erreur lors de la sauvegarde de la maison")
       console.error("Error saving house:", error)
+      // Error is handled by the hook
     }
   }
 

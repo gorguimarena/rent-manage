@@ -2,56 +2,28 @@
 
 import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import axios from "axios"
 import MonthlyReport from "../components/MonthlyReport"
 import Loader from "../components/Loader"
-import { baseUrl, housesUrl, paymentsUrl, tenantsUrl, expensesUrl } from "../config/url"
+import ErrorMessage from "../components/ErrorMessage"
+import { useReportsData } from "../hooks/useDataQueries"
 
 function Reports() {
   const { month } = useParams()
   const navigate = useNavigate()
   const [selectedMonth, setSelectedMonth] = useState(month || new Date().toISOString().slice(0, 7))
-  const [reportData, setReportData] = useState({
-    payments: [],
-    tenants: [],
-    houses: [],
-    expenses: [],
-  })
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState("")
   const [filter, setFilter] = useState("all") // all, paid, unpaid
+
+  const { data: reportData, isLoading: loading, error, isStale, refetch } = useReportsData(selectedMonth)
+
+  const handleRetry = () => {
+    refetch()
+  }
 
   useEffect(() => {
     if (selectedMonth) {
       navigate(`/reports/${selectedMonth}`, { replace: true })
-      fetchReportData()
     }
   }, [selectedMonth, navigate])
-
-  const fetchReportData = async () => {
-    try {
-      setLoading(true)
-      const [paymentsRes, tenantsRes, housesRes, expensesRes] = await Promise.all([
-        axios.get(`${baseUrl}${paymentsUrl}?month=${selectedMonth}`),
-        axios.get(`${baseUrl}${tenantsUrl}`),
-        axios.get(`${baseUrl}${housesUrl}`),
-        axios.get(`${baseUrl}${expensesUrl}?month=${selectedMonth}`),
-      ])
-
-      setReportData({
-        payments: paymentsRes.data,
-        tenants: tenantsRes.data,
-        houses: housesRes.data,
-        expenses: expensesRes.data,
-      })
-      setError("")
-    } catch (error) {
-      setError("Erreur lors du chargement du rapport")
-      console.error("Error fetching report data:", error)
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const handleMonthChange = (e) => {
     setSelectedMonth(e.target.value)
@@ -102,11 +74,11 @@ function Reports() {
         </div>
       </div>
 
-      {error && (
-        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
-          <p className="text-red-600">{error}</p>
-        </div>
-      )}
+      <ErrorMessage
+        error={error}
+        onRetry={handleRetry}
+        title="Erreur de chargement du rapport"
+      />
 
       <MonthlyReport
         month={selectedMonth}
