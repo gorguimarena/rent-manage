@@ -17,6 +17,8 @@ function Houses() {
   const [showForm, setShowForm] = useState(false)
   const [editingHouse, setEditingHouse] = useState(null)
   const [error, setError] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 6
   const houseBase = `${baseUrl}${housesUrl}`
 
   // Vérifier si l'utilisateur peut voir cette page
@@ -98,18 +100,22 @@ function Houses() {
     setEditingHouse(null)
   }
 
+  const handlePageChange = (page) => {
+    setCurrentPage(page)
+  }
+
   if (loading) {
     return <Loader text="Chargement des maisons..." />
   }
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Gestion des Maisons</h1>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Gestion des Maisons</h1>
         {hasPermission(user, 'canManageHouses') && (
           <button
             onClick={handleAddHouse}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium w-full sm:w-auto"
           >
             Ajouter une maison
           </button>
@@ -133,6 +139,9 @@ function Houses() {
         onEdit={handleEditHouse}
         onDelete={handleDeleteHouse}
         canManageHouses={hasPermission(user, 'canManageHouses')}
+        currentPage={currentPage}
+        itemsPerPage={itemsPerPage}
+        onPageChange={handlePageChange}
       />
     </div>
   )

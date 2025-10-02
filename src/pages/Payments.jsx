@@ -14,6 +14,8 @@ function Payments() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [currentMonth, setCurrentMonth] = useState(new Date().toISOString().slice(0, 7))
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 6
 
   const paymentBase = `${baseUrl}${paymentsUrl}`
   useEffect(() => {
@@ -70,12 +72,21 @@ function Payments() {
       try {
         await axios.delete(`${paymentBase}/${paymentId}`)
         setPayments(payments.filter((p) => p.id !== paymentId))
+        // Reset to first page if current page becomes empty
+        const totalPages = Math.ceil((payments.length - 1) / itemsPerPage)
+        if (currentPage > totalPages && totalPages > 0) {
+          setCurrentPage(totalPages)
+        }
         setError("")
       } catch (error) {
         setError("Erreur lors de la suppression du paiement")
         console.error("Error deleting payment:", error)
       }
     }
+  }
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page)
   }
 
   if (loading) {
@@ -85,9 +96,9 @@ function Payments() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">Gestion des Paiements</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Gestion des Paiements</h1>
 
-        <div className="flex items-center space-x-4 mb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-4 sm:space-y-0 mb-4">
           <label htmlFor="month-filter" className="text-sm font-medium text-gray-700">
             Mois:
           </label>
@@ -107,7 +118,7 @@ function Payments() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-6">
         <div>
           <h2 className="text-lg font-medium text-gray-900 mb-4">Enregistrer un paiement</h2>
           <PaymentForm
@@ -124,7 +135,15 @@ function Payments() {
             Paiements pour{" "}
             {new Date(currentMonth + "-01").toLocaleDateString("fr-FR", { month: "long", year: "numeric" })}
           </h2>
-          <PaymentList payments={payments} tenants={tenants} houses={houses} onDelete={handleDeletePayment} />
+          <PaymentList
+            payments={payments}
+            tenants={tenants}
+            houses={houses}
+            onDelete={handleDeletePayment}
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+            onPageChange={handlePageChange}
+          />
         </div>
       </div>
     </div>

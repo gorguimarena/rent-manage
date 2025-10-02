@@ -14,6 +14,8 @@ function Tenants() {
   const [showForm, setShowForm] = useState(false)
   const [editingTenant, setEditingTenant] = useState(null)
   const [error, setError] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 10
   const baseTenant = `${baseUrl}${tenantsUrl}`
 
   useEffect(() => {
@@ -127,17 +129,21 @@ function Tenants() {
     setEditingTenant(null)
   }
 
+  const handlePageChange = (page) => {
+    setCurrentPage(page)
+  }
+
   if (loading) {
     return <Loader text="Chargement des locataires..." />
   }
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Gestion des Locataires</h1>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Gestion des Locataires</h1>
         <button
           onClick={handleAddTenant}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium w-full sm:w-auto"
         >
           Ajouter un locataire
         </button>
@@ -155,7 +161,15 @@ function Tenants() {
         </div>
       )}
 
-      <TenantList tenants={tenants} houses={houses} onEdit={handleEditTenant} onDelete={handleDeleteTenant} />
+      <TenantList
+        tenants={tenants}
+        houses={houses}
+        onEdit={handleEditTenant}
+        onDelete={handleDeleteTenant}
+        currentPage={currentPage}
+        itemsPerPage={itemsPerPage}
+        onPageChange={handlePageChange}
+      />
     </div>
   )
 }

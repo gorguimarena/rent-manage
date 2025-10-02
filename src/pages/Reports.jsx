@@ -68,9 +68,9 @@ function Reports() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">Rapports Mensuels</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Rapports Mensuels</h1>
 
-        <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-4 sm:space-y-0">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:space-x-4 space-y-4 lg:space-y-0">
           <div className="flex items-center space-x-2">
             <label htmlFor="month-select" className="text-sm font-medium text-gray-700">
               Mois:

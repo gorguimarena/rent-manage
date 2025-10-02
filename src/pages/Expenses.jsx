@@ -12,6 +12,8 @@ function Expenses() {
   const [houses, setHouses] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 4
 
   const expenseBase = `${baseUrl}${expensesUrl}`
   useEffect(() => {
@@ -50,12 +52,21 @@ function Expenses() {
       try {
         await axios.delete(`${expenseBase}/${expenseId}`)
         setExpenses(expenses.filter((e) => e.id !== expenseId))
+        // Reset to first page if current page becomes empty
+        const totalPages = Math.ceil((expenses.length - 1) / itemsPerPage)
+        if (currentPage > totalPages && totalPages > 0) {
+          setCurrentPage(totalPages)
+        }
         setError("")
       } catch (error) {
         setError("Erreur lors de la suppression de la dépense")
         console.error("Error deleting expense:", error)
       }
     }
+  }
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page)
   }
 
   if (loading) {
@@ -65,7 +76,7 @@ function Expenses() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">Gestion des Dépenses</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Gestion des Dépenses</h1>
       </div>
 
       {error && (
@@ -74,7 +85,7 @@ function Expenses() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-6">
         <div>
           <h2 className="text-lg font-medium text-gray-900 mb-4">Ajouter une dépense</h2>
           <ExpenseForm houses={houses} onSubmit={handleExpenseSubmit} />
@@ -82,7 +93,14 @@ function Expenses() {
 
         <div>
           <h2 className="text-lg font-medium text-gray-900 mb-4">Liste des dépenses</h2>
-          <ExpenseList expenses={expenses} houses={houses} onDelete={handleDeleteExpense} />
+          <ExpenseList
+            expenses={expenses}
+            houses={houses}
+            onDelete={handleDeleteExpense}
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+            onPageChange={handlePageChange}
+          />
         </div>
       </div>
     </div>
